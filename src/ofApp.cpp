@@ -9,7 +9,7 @@ void ofApp::setup(){
 
     
     cap.setup(ofGetWidth(), ofGetHeight());
-    video.load("goki2.mov");
+    video.load("gokite1.mov");
     video.play();
     
     diffImage.allocate(ofGetWidth(), ofGetHeight(), OF_IMAGE_COLOR);
