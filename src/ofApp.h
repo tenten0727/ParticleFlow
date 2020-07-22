@@ -39,4 +39,6 @@ class ofApp : public ofBaseApp{
         
         bool texDraw = false;
         bool b_video = true;
+    
+        float time;
 };

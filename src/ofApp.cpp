@@ -9,7 +9,7 @@ void ofApp::setup(){
 
     
     cap.setup(ofGetWidth(), ofGetHeight());
-    video.load("gokite1.mov");
+    video.load("gokite1-2.mov");
     video.play();
     
     diffImage.allocate(ofGetWidth(), ofGetHeight(), OF_IMAGE_COLOR);
@@ -22,9 +22,22 @@ void ofApp::setup(){
     particles.setMode(OF_PRIMITIVE_POINTS);
     for(int j=0;j<ofGetHeight();j++){
         for(int i=0;i<ofGetWidth();i++){
-                particles.addVertex(ofVec3f(0,0,0));
-                particles.addTexCoord(ofVec2f(i, j));
-                particles.addColor(ofFloatColor(1.0, 1.0, 1.0, 1.0));
+            particles.addVertex(ofVec3f(0,0,0));
+            particles.addTexCoord(ofVec2f(i, j));
+            int rand = ofRandom(3);
+            switch (rand) {
+                case 0:
+                    particles.addColor(ofFloatColor(0.0, 0.0, 0.0, 0.7));
+                    break;
+                case 1:
+                    particles.addColor(ofFloatColor(0.2, 0.2, 1.0, 0.7));
+                    break;
+                case 2:
+                    particles.addColor(ofFloatColor(1.0, 1.0, 1.0, 0.7));
+                    break;
+                default:
+                    break;
+            }
         }
     }
     
@@ -61,7 +74,7 @@ void ofApp::setup(){
 
 //--------------------------------------------------------------
 void ofApp::update(){
-    float time = ofGetElapsedTimef();
+    time = ofGetElapsedTimef();
 
     cap.update();
     video.update();
@@ -105,14 +118,14 @@ void ofApp::draw(){
         cap.draw(0, 0);
     }
     
-    ofEnableAlphaBlending();
     render.begin();
     render.setUniformTexture("u_posAndAgeTex", pingPong.src->getTextureReference(0), 0);
     updatePos.setUniformTexture("u_velAndMaxAgeTex", pingPong.src->getTextureReference(1), 1);
+    updatePos.setUniform1f("u_time", time);
+
     particles.draw();
 
     render.end();
-    ofDisableAlphaBlending();
     if(texDraw){
         diffImage.draw(0, 0);
     }
