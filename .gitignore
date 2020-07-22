@@ -1,1 +1,10 @@
 libfmodex.dylib
+bin/100banch77Debug.app/Contents/Info.plist
+bin/100banch77Debug.app/Contents/PkgInfo
+bin/100banch77Debug.app/Contents/MacOS/100banch77Debug
+bin/100banch77Debug.app/Contents/Resources/icon-debug.icns
+bin/ParticleFlowDebug.app/Contents/Info.plist
+bin/ParticleFlowDebug.app/Contents/PkgInfo
+bin/ParticleFlowDebug.app/Contents/MacOS/ParticleFlowDebug
+bin/ParticleFlowDebug.app/Contents/Resources/icon-debug.icns
+ParticleFlow.xcodeproj/xcuserdata/tenten.xcuserdatad/xcdebugger/Breakpoints_v2.xcbkptlist
