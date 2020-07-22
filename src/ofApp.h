@@ -1,6 +1,10 @@
 #pragma once
 
 #include "ofMain.h"
+#include "ofxCv.h"
+#include "ofxOpenCv.h"
+#include "ofxGui.h"
+#include "pingPongBuffer.h"
 
 class ofApp : public ofBaseApp{
 
@@ -21,4 +25,18 @@ class ofApp : public ofBaseApp{
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);
 		
+    private:
+        cv::Mat prevFrame, frame, diff;
+        ofImage diffImage;
+        ofFbo fbo;
+            
+        ofVideoGrabber cap;
+        ofVideoPlayer video;
+    
+        ofShader render, updatePos;
+        ofVboMesh particles;
+        pingPongBuffer pingPong;
+        
+        bool texDraw = false;
+        bool b_video = true;
 };
