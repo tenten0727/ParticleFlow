@@ -19,10 +19,8 @@ void main() {
     
     gl_PointSize = 1.0;
     gl_Position = gl_ModelViewProjectionMatrix * vec4(pos, 1.0);
-    float r = 1.5*snoise(vec4(pos.x * 0.01, 0, 0, age*0.01))*gl_Color.r + 0.1;
-    float g = 1.5*snoise(vec4(0, pos.y * 0.01, 0, age*0.01))*gl_Color.g + 0.1;
-    float b = 1.5+snoise(vec4(0, 0, pos.z * 0.01, age*0.01))*gl_Color.b + 0.5;
-    v_Color = vec4(r, g, b, gl_Color.a);
+
+    v_Color = gl_Color;
 }
 
 

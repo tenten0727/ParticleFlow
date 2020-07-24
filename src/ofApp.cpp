@@ -6,13 +6,14 @@ void ofApp::setup(){
     ofBackground(0);
     ofDisableAlphaBlending();
     ofEnableArbTex();
-
     
-    cap.setup(ofGetWidth(), ofGetHeight());
-    video.load("gokite1-2.mov");
+    recorder.setup(glm::vec2(WIDTH,HEIGHT));
+    
+//    cap.setup(WIDTH, HEIGHT);
+    video.load("gokite1.mov");
     video.play();
     
-    diffImage.allocate(ofGetWidth(), ofGetHeight(), OF_IMAGE_COLOR);
+    diffImage.allocate(WIDTH, HEIGHT, OF_IMAGE_COLOR);
     diff = cv::Mat(diffImage.getHeight(), diffImage.getWidth(), CV_MAKETYPE(CV_8UC3, diffImage.getPixels().getNumChannels()), diffImage.getPixels().getData(), 0);
     
     render.load("shaders/render");
@@ -20,20 +21,20 @@ void ofApp::setup(){
     
     
     particles.setMode(OF_PRIMITIVE_POINTS);
-    for(int j=0;j<ofGetHeight();j++){
-        for(int i=0;i<ofGetWidth();i++){
+    for(int j=0;j<HEIGHT;j++){
+        for(int i=0;i<WIDTH;i++){
             particles.addVertex(ofVec3f(0,0,0));
             particles.addTexCoord(ofVec2f(i, j));
             int rand = ofRandom(3);
             switch (rand) {
                 case 0:
-                    particles.addColor(ofFloatColor(0.0, 0.0, 0.0, 0.7));
+                    particles.addColor(ofFloatColor(0.1, 0.1, 0.1, 0.7));
                     break;
                 case 1:
-                    particles.addColor(ofFloatColor(0.2, 0.2, 1.0, 0.7));
+                    particles.addColor(ofFloatColor(0.2, 0.2, 0.7, 0.7));
                     break;
                 case 2:
-                    particles.addColor(ofFloatColor(1.0, 1.0, 1.0, 0.7));
+                    particles.addColor(ofFloatColor(ofRandomf()*0.7, ofRandomf()*0.7, ofRandomf()*0.7, 0.7));
                     break;
                 default:
                     break;
@@ -41,35 +42,37 @@ void ofApp::setup(){
         }
     }
     
-    pingPong.allocate(ofGetWidth(), ofGetHeight(), GL_RGBA32F, 2);
-    float * posAndAge = new float[ofGetWidth() * ofGetHeight() * 4];
-    for (int x = 0; x < ofGetWidth(); x++){
-        for (int y = 0; y < ofGetHeight(); y++){
-            int i = ofGetWidth() * y + x;
+    pingPong.allocate(WIDTH, HEIGHT, GL_RGBA32F, 2);
+    float * posAndAge = new float[WIDTH * HEIGHT * 4];
+    for (int x = 0; x < WIDTH; x++){
+        for (int y = 0; y < HEIGHT; y++){
+            int i = WIDTH * y + x;
             posAndAge[i*4 + 0] = 0;
             posAndAge[i*4 + 1] = 0;
             posAndAge[i*4 + 2] = 0;
             posAndAge[i*4 + 3] = 0;
         }
     }
-    pingPong.src->getTextureReference(0).loadData(posAndAge, ofGetWidth(), ofGetHeight(), GL_RGBA);
+    pingPong.src->getTextureReference(0).loadData(posAndAge, WIDTH, HEIGHT, GL_RGBA);
     delete [] posAndAge;
     
     
-    float * velAndMaxAge = new float[ofGetWidth() * ofGetHeight() * 4];
-    for (int x = 0; x < ofGetWidth(); x++){
-        for (int y = 0; y < ofGetHeight(); y++){
-            int i = ofGetWidth() * y + x;
+    float * velAndMaxAge = new float[WIDTH * HEIGHT * 4];
+    for (int x = 0; x < WIDTH; x++){
+        for (int y = 0; y < HEIGHT; y++){
+            int i = WIDTH * y + x;
             velAndMaxAge[i*4 + 0] = 0.0;
             velAndMaxAge[i*4 + 1] = -5.0;
             velAndMaxAge[i*4 + 2] = 0.0;
             velAndMaxAge[i*4 + 3] = ofRandom(10,50);
         }
     }
-    pingPong.src->getTextureReference(1).loadData(velAndMaxAge, ofGetWidth(), ofGetHeight(), GL_RGBA);
+    pingPong.src->getTextureReference(1).loadData(velAndMaxAge, WIDTH, HEIGHT, GL_RGBA);
     delete [] velAndMaxAge;
 
-    fbo.allocate(ofGetWidth(), ofGetHeight());
+    fbo.allocate(WIDTH, HEIGHT);
+    
+    
 }
 
 //--------------------------------------------------------------
@@ -111,12 +114,9 @@ void ofApp::update(){
 
 //--------------------------------------------------------------
 void ofApp::draw(){
-    if(b_video){
-        video.draw(0, 0);
-    }
-    else{
-        cap.draw(0, 0);
-    }
+    fbo.begin();
+    ofClear(0);
+    video.draw(0, 0, WIDTH, HEIGHT);
     
     render.begin();
     render.setUniformTexture("u_posAndAgeTex", pingPong.src->getTextureReference(0), 0);
@@ -126,19 +126,17 @@ void ofApp::draw(){
     particles.draw();
 
     render.end();
-    if(texDraw){
-        diffImage.draw(0, 0);
-    }
+    
+    fbo.end();
+    fbo.draw(0, 0);
+    
+    recorder.record(fbo);
+
 }
 
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){
-    if(key == 't'){
-        texDraw = !texDraw;
-    }
-    if(key == 'v'){
-        b_video = !b_video;
-    }
+    
 }
 
 //--------------------------------------------------------------

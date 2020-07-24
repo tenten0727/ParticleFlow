@@ -5,6 +5,10 @@
 #include "ofxOpenCv.h"
 #include "ofxGui.h"
 #include "pingPongBuffer.h"
+#include "ofxSequenceRecorder.h"
+
+#define WIDTH 1920
+#define HEIGHT 1080
 
 class ofApp : public ofBaseApp{
 
@@ -41,4 +45,7 @@ class ofApp : public ofBaseApp{
         bool b_video = true;
     
         float time;
+    
+        ofxSequenceRecorder recorder;
+
 };
