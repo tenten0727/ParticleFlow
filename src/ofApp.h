@@ -7,6 +7,7 @@
 #include "pingPongBuffer.h"
 #include "ofxSequenceRecorder.h"
 #include "ofxSyphon.h"
+#include "ofxPubSubOsc.h"
 
 
 
@@ -14,42 +15,42 @@
 #define HEIGHT 1080
 
 class ofApp : public ofBaseApp{
-
-	public:
-		void setup();
-		void update();
-		void draw();
-
-		void keyPressed(int key);
-		void keyReleased(int key);
-		void mouseMoved(int x, int y );
-		void mouseDragged(int x, int y, int button);
-		void mousePressed(int x, int y, int button);
-		void mouseReleased(int x, int y, int button);
-		void mouseEntered(int x, int y);
-		void mouseExited(int x, int y);
-		void windowResized(int w, int h);
-		void dragEvent(ofDragInfo dragInfo);
-		void gotMessage(ofMessage msg);
-		
-    private:
-        cv::Mat prevFrame, frame, diff;
-        ofImage diffImage;
-        ofFbo fbo;
-            
-        ofVideoGrabber cap;
-        ofVideoPlayer video;
     
-        ofShader render, updatePos;
-        ofVboMesh particles;
-        pingPongBuffer pingPong;
-        
-        bool texDraw = false;
-        bool b_video = true;
+public:
+    void setup();
+    void update();
+    void draw();
     
-        float time;
+    void keyPressed(int key);
+    void keyReleased(int key);
+    void mouseMoved(int x, int y );
+    void mouseDragged(int x, int y, int button);
+    void mousePressed(int x, int y, int button);
+    void mouseReleased(int x, int y, int button);
+    void mouseEntered(int x, int y);
+    void mouseExited(int x, int y);
+    void windowResized(int w, int h);
+    void dragEvent(ofDragInfo dragInfo);
+    void gotMessage(ofMessage msg);
     
-        ofxSequenceRecorder recorder;
+private:
+    cv::Mat prevFrame, frame, diff;
+    ofImage diffImage;
+    ofFbo fbo;
+    
+    ofVideoGrabber cap;
+    ofVideoPlayer video;
+    
+    ofShader render, updatePos;
+    ofVboMesh particles;
+    pingPongBuffer pingPong;
+    
+    bool texDraw = false;
+    bool b_video = true;
+    
+    float time;
+    
+    ofxSequenceRecorder recorder;
     ofxSyphonServer server;
-
+    
 };
