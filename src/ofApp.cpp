@@ -7,7 +7,8 @@ void ofApp::setup(){
     ofDisableAlphaBlending();
     ofEnableArbTex();
     
-    recorder.setup(glm::vec2(WIDTH,HEIGHT));
+   recorder.setup(glm::vec2(WIDTH,HEIGHT));
+ //  recorder.isRecording = !recorder.isRecording;
     
 //    cap.setup(WIDTH, HEIGHT);
     video.load("gokite1.mov");
@@ -42,7 +43,7 @@ void ofApp::setup(){
         }
     }
     
-    pingPong.allocate(WIDTH, HEIGHT, GL_RGBA32F, 2);
+    pingPong.allocate(WIDTH, HEIGHT, GL_RGBA16F, 2);
     float * posAndAge = new float[WIDTH * HEIGHT * 4];
     for (int x = 0; x < WIDTH; x++){
         for (int y = 0; y < HEIGHT; y++){
@@ -53,7 +54,7 @@ void ofApp::setup(){
             posAndAge[i*4 + 3] = 0;
         }
     }
-    pingPong.src->getTextureReference(0).loadData(posAndAge, WIDTH, HEIGHT, GL_RGBA);
+    pingPong.src->getTexture(0).loadData(posAndAge, WIDTH, HEIGHT, GL_RGBA);
     delete [] posAndAge;
     
     
@@ -67,19 +68,22 @@ void ofApp::setup(){
             velAndMaxAge[i*4 + 3] = ofRandom(10,50);
         }
     }
-    pingPong.src->getTextureReference(1).loadData(velAndMaxAge, WIDTH, HEIGHT, GL_RGBA);
+    pingPong.src->getTexture(1).loadData(velAndMaxAge, WIDTH, HEIGHT, GL_RGBA);
     delete [] velAndMaxAge;
 
-    fbo.allocate(WIDTH, HEIGHT);
+    fbo.allocate(WIDTH, HEIGHT,GL_RGB);
+
     
     
 }
 
 //--------------------------------------------------------------
 void ofApp::update(){
-    time = ofGetElapsedTimef();
+    time = ofGetFrameNum()/60.0;
+    
+    ofSetWindowTitle(ofToString(ofGetFrameNum()));
 
-    cap.update();
+   // cap.update();
     video.update();
     
     ofImage src;
@@ -89,27 +93,26 @@ void ofApp::update(){
     else{
         src.setFromPixels(cap.getPixels());
     }
-    
+
     frame = ofxCv::toCv(src);
     if(ofGetFrameNum() > 2){
         diff = prevFrame - frame;
     }
-    frame.copyTo(prevFrame);
+        frame.copyTo(prevFrame);
     diffImage.update();
     
     pingPong.dst->begin();
-    
+    ofClear(0,255);
     updatePos.begin();
-    updatePos.setUniformTexture("u_posAndAgeTex", pingPong.src->getTextureReference(0), 0);
-    updatePos.setUniformTexture("u_velAndMaxAgeTex", pingPong.src->getTextureReference(1), 1);
+    updatePos.setUniformTexture("u_posAndAgeTex", pingPong.src->getTexture(0), 0);
+    updatePos.setUniformTexture("u_velAndMaxAgeTex", pingPong.src->getTexture(1), 1);
     updatePos.setUniformTexture("u_diffTex", diffImage.getTexture(), 2);
     updatePos.setUniform1f("u_time", time);
-    pingPong.src->draw(0, 0);
+    pingPong.src->draw(0, 0,WIDTH,HEIGHT);
     updatePos.end();
     
     pingPong.dst->end();
     pingPong.swap();
-    
 }
 
 //--------------------------------------------------------------
@@ -117,26 +120,24 @@ void ofApp::draw(){
     fbo.begin();
     ofClear(0);
     video.draw(0, 0, WIDTH, HEIGHT);
-    
     render.begin();
-    render.setUniformTexture("u_posAndAgeTex", pingPong.src->getTextureReference(0), 0);
-    updatePos.setUniformTexture("u_velAndMaxAgeTex", pingPong.src->getTextureReference(1), 1);
+    render.setUniformTexture("u_posAndAgeTex", pingPong.src->getTexture(0), 0);
+    updatePos.setUniformTexture("u_velAndMaxAgeTex", pingPong.src->getTexture(1), 1);
     updatePos.setUniform1f("u_time", time);
-
     particles.draw();
-
     render.end();
-    
     fbo.end();
     fbo.draw(0, 0);
-    
-    recorder.record(fbo);
+         recorder.record(fbo);
 
+   
 }
 
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){
-    
+    if(key == 'a'){
+        recorder.isRecording = !recorder.isRecording;
+    }
 }
 
 //--------------------------------------------------------------
