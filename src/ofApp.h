@@ -43,4 +43,9 @@ private:
     ofxSequenceRecorder recorder;
     ofxSyphonServer server;
     
+    bool isFrameSent = false;
+    bool isFrameRecorded = false;
+    void sceneUpdate();
+ 
+    int currentFrameNum = 0;
 };

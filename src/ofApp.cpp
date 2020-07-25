@@ -73,17 +73,14 @@ void ofApp::setup(){
     fbo.allocate(WIDTH, HEIGHT,GL_RGBA);
     server.setName("ParticleFlow");
     
+    ofxSubscribeOsc(8001, "/recorded", [=](){
+        isFrameRecorded = true;
+    });
+    
 }
 
-//--------------------------------------------------------------
-void ofApp::update(){
-    time = ofGetFrameNum()/60.0;
-    
-    ofSetWindowTitle(ofToString(ofGetFrameNum()));
-    
-    // cap.update();
+void ofApp::sceneUpdate(){
     video.update();
-    
     ofImage src;
     if(b_video){
         src.setFromPixels(video.getPixels());
@@ -111,10 +108,7 @@ void ofApp::update(){
     
     pingPong.dst->end();
     pingPong.swap();
-}
-
-//--------------------------------------------------------------
-void ofApp::draw(){
+    
     fbo.begin();
     ofClear(0);
     video.draw(0, 0, WIDTH, HEIGHT);
@@ -125,6 +119,39 @@ void ofApp::draw(){
     particles.draw();
     render.end();
     fbo.end();
+}
+
+
+//--------------------------------------------------------------
+void ofApp::update(){
+    time = currentFrameNum/60.0;
+    
+    if(!isFrameSent&&!isFrameRecorded){
+        sceneUpdate();
+        ofxPublishOsc("localhost", 8000, "/update", true);
+        isFrameSent = true;
+    }
+    if(isFrameSent&&!isFrameRecorded){
+        //フレーム送ったけど録画されたかわからないので待機
+    }
+    if(isFrameSent&&isFrameRecorded){
+        isFrameSent = false;
+        isFrameRecorded = false;
+        // リセット
+    }
+    
+    
+    //  ofSetWindowTitle(ofToString(ofGetFrameNum()));
+    
+    // cap.update();
+    
+    
+    
+}
+
+//--------------------------------------------------------------
+void ofApp::draw(){
+    
     fbo.draw(0, 0);
     //recorder.record(fbo);
     server.publishTexture(&fbo.getTexture());

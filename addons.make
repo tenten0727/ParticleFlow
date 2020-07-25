@@ -1,4 +1,7 @@
 ofxOpenCv
 ofxCv
 ofxGui
+ofxOsc
+ofxPubSubOsc
 ofxSequenceRecorder
+ofxSyphon
