@@ -6,6 +6,9 @@
 #include "ofxGui.h"
 #include "pingPongBuffer.h"
 #include "ofxSequenceRecorder.h"
+#include "ofxSyphon.h"
+
+
 
 #define WIDTH 1920
 #define HEIGHT 1080
@@ -47,5 +50,6 @@ class ofApp : public ofBaseApp{
         float time;
     
         ofxSequenceRecorder recorder;
+    ofxSyphonServer server;
 
 };

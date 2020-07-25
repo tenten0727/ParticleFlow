@@ -7,10 +7,10 @@ void ofApp::setup(){
     ofDisableAlphaBlending();
     ofEnableArbTex();
     
-   recorder.setup(glm::vec2(WIDTH,HEIGHT));
- //  recorder.isRecording = !recorder.isRecording;
+    //recorder.setup(glm::vec2(WIDTH,HEIGHT));
+    //  recorder.isRecording = !recorder.isRecording;
     
-//    cap.setup(WIDTH, HEIGHT);
+    //    cap.setup(WIDTH, HEIGHT);
     video.load("gokite1.mov");
     video.play();
     
@@ -19,7 +19,6 @@ void ofApp::setup(){
     
     render.load("shaders/render");
     updatePos.load("","shaders/update.frag");
-    
     
     particles.setMode(OF_PRIMITIVE_POINTS);
     for(int j=0;j<HEIGHT;j++){
@@ -70,10 +69,9 @@ void ofApp::setup(){
     }
     pingPong.src->getTexture(1).loadData(velAndMaxAge, WIDTH, HEIGHT, GL_RGBA);
     delete [] velAndMaxAge;
-
-    fbo.allocate(WIDTH, HEIGHT,GL_RGB);
-
     
+    fbo.allocate(WIDTH, HEIGHT,GL_RGBA);
+    server.setName("ParticleFlow");
     
 }
 
@@ -82,8 +80,8 @@ void ofApp::update(){
     time = ofGetFrameNum()/60.0;
     
     ofSetWindowTitle(ofToString(ofGetFrameNum()));
-
-   // cap.update();
+    
+    // cap.update();
     video.update();
     
     ofImage src;
@@ -93,12 +91,12 @@ void ofApp::update(){
     else{
         src.setFromPixels(cap.getPixels());
     }
-
+    
     frame = ofxCv::toCv(src);
     if(ofGetFrameNum() > 2){
         diff = prevFrame - frame;
     }
-        frame.copyTo(prevFrame);
+    frame.copyTo(prevFrame);
     diffImage.update();
     
     pingPong.dst->begin();
@@ -128,64 +126,65 @@ void ofApp::draw(){
     render.end();
     fbo.end();
     fbo.draw(0, 0);
-         recorder.record(fbo);
-
-   
+    //recorder.record(fbo);
+    server.publishTexture(&fbo.getTexture());
+    
+    
 }
 
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){
     if(key == 'a'){
-        recorder.isRecording = !recorder.isRecording;
+        // recorder.isRecording = !recorder.isRecording;
     }
 }
 
 //--------------------------------------------------------------
 void ofApp::keyReleased(int key){
-
+    
 }
 
 //--------------------------------------------------------------
 void ofApp::mouseMoved(int x, int y ){
-
+    
 }
 
 //--------------------------------------------------------------
 void ofApp::mouseDragged(int x, int y, int button){
-
+    
 }
 
 //--------------------------------------------------------------
 void ofApp::mousePressed(int x, int y, int button){
-
+    
 }
 
 //--------------------------------------------------------------
 void ofApp::mouseReleased(int x, int y, int button){
-
+    
 }
 
 //--------------------------------------------------------------
 void ofApp::mouseEntered(int x, int y){
-
+    
 }
 
 //--------------------------------------------------------------
 void ofApp::mouseExited(int x, int y){
-
+    
 }
 
 //--------------------------------------------------------------
 void ofApp::windowResized(int w, int h){
-
+    
 }
 
 //--------------------------------------------------------------
 void ofApp::gotMessage(ofMessage msg){
-
+    
 }
 
 //--------------------------------------------------------------
 void ofApp::dragEvent(ofDragInfo dragInfo){ 
-
+    
 }
