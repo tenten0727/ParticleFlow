@@ -2,6 +2,7 @@
 
 //--------------------------------------------------------------
 void ofApp::setup(){
+    
     ofSetFrameRate(60);
     ofBackground(0);
     ofDisableAlphaBlending();
@@ -70,13 +71,15 @@ void ofApp::setup(){
     pingPong.src->getTexture(1).loadData(velAndMaxAge, WIDTH, HEIGHT, GL_RGBA);
     delete [] velAndMaxAge;
     
-    fbo.allocate(WIDTH, HEIGHT,GL_RGBA);
+    fbo.allocate(WIDTH, HEIGHT,GL_RGB);
     server.setName("ParticleFlow");
     
     ofxSubscribeOsc(8001, "/recorded", [=](){
-        isFrameRecorded = true;
+            isFrameSent = false;
+       // sceneUpdate();
     });
-    
+    ofxPublishOsc("127.0.0.1", 8000, "/update", currentFrameNum);
+    currentFrameNum++;
 }
 
 void ofApp::sceneUpdate(){
@@ -126,19 +129,22 @@ void ofApp::sceneUpdate(){
 void ofApp::update(){
     time = currentFrameNum/60.0;
     
-    if(!isFrameSent&&!isFrameRecorded){
+    if(!isFrameSent){
         sceneUpdate();
-        ofxPublishOsc("localhost", 8000, "/update", true);
+        //  ofxPublishOsc("127.0.0.1", 8000, "/update", true);
         isFrameSent = true;
+                    currentFrameNum++;
     }
-    if(isFrameSent&&!isFrameRecorded){
-        //フレーム送ったけど録画されたかわからないので待機
-    }
-    if(isFrameSent&&isFrameRecorded){
-        isFrameSent = false;
-        isFrameRecorded = false;
-        // リセット
-    }
+//    if(isFrameSent&&!isFrameRecorded){
+//        //フレーム送ったけど録画されたかわからないので待機
+//        cout<<"waiting"<<endl;
+//    }
+//    if(isFrameSent&&isFrameRecorded){
+//        isFrameSent = false;
+//        isFrameRecorded = false;
+//
+//        // リセット
+//    }
     
     
     //  ofSetWindowTitle(ofToString(ofGetFrameNum()));
@@ -152,7 +158,7 @@ void ofApp::update(){
 //--------------------------------------------------------------
 void ofApp::draw(){
     
-    fbo.draw(0, 0);
+    fbo.getTexture().draw(0, 0);
     //recorder.record(fbo);
     server.publishTexture(&fbo.getTexture());
     
@@ -163,5 +169,6 @@ void ofApp::draw(){
 void ofApp::keyPressed(int key){
     if(key == 'a'){
         // recorder.isRecording = !recorder.isRecording;
+        
     }
 }
