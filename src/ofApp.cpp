@@ -10,7 +10,7 @@ void ofApp::setup(){
     
     //recorder.setup(glm::vec2(WIDTH,HEIGHT));
     //  recorder.isRecording = !recorder.isRecording;
-    
+                            
     //    cap.setup(WIDTH, HEIGHT);
     video.load("gokite.mov");
     video.play();
