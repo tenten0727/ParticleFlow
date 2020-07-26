@@ -12,8 +12,9 @@ void ofApp::setup(){
     //  recorder.isRecording = !recorder.isRecording;
     
     //    cap.setup(WIDTH, HEIGHT);
-    video.load("gokite1.mov");
+    video.load("gokite.mov");
     video.play();
+    video.setSpeed(0.1);
     
     diffImage.allocate(WIDTH, HEIGHT, OF_IMAGE_COLOR);
     diff = cv::Mat(diffImage.getHeight(), diffImage.getWidth(), CV_MAKETYPE(CV_8UC3, diffImage.getPixels().getNumChannels()), diffImage.getPixels().getData(), 0);
